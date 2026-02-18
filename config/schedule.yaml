@@ -1,0 +1,3 @@
+# Schedule configuration for recurring jobs.
+# Populated in Phase 4 when the scheduler is implemented.
+jobs: []
