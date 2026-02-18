@@ -12,6 +12,17 @@ echo "Clawdia Credential Setup"
 echo "========================"
 echo
 
+# Preflight: Check Docker is installed and daemon is running
+if ! command -v docker >/dev/null 2>&1; then
+    echo "[!] Error: Docker not installed — please install Docker"
+    exit 1
+fi
+
+if ! docker info >/dev/null 2>&1; then
+    echo "[!] Error: Docker daemon not running — please start Docker"
+    exit 1
+fi
+
 # Step 1: Check/create .env file
 if [[ ! -f "$PROJECT_DIR/.env" ]]; then
     if [[ -f "$PROJECT_DIR/.env.example" ]]; then
