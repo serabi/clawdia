@@ -8,6 +8,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY clawdia/ clawdia/
+COPY healthcheck.py .
 
 RUN useradd --create-home clawdia
 USER clawdia

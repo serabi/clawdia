@@ -1,24 +1,33 @@
-.PHONY: all build up down logs restart test clean
+.PHONY: all build up down logs restart test clean setup
+
+# Detect Docker Compose command (v2: "docker compose", v1: "docker-compose")
+COMPOSE := $(shell docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose")
+
+# Detect Python command (python3 preferred, fallback to python)
+PYTHON := $(shell command -v python3 >/dev/null 2>&1 && echo "python3" || echo "python")
 
 all: build up
 
 build:
-	docker compose build
+	$(COMPOSE) build
 
 up:
-	docker compose up -d
+	$(COMPOSE) up -d
 
 down:
-	docker compose down
+	$(COMPOSE) down
 
 logs:
-	docker compose logs -f
+	$(COMPOSE) logs -f
 
 restart:
-	docker compose restart
+	$(COMPOSE) restart
 
 test:
-	python -m pytest tests/ -v
+	PYTHONPATH=bot $(PYTHON) -m pytest tests/ -v
 
 clean:
-	docker compose down --volumes --rmi local
+	$(COMPOSE) down --volumes --rmi local
+
+setup:
+	@./scripts/setup-credentials.sh
