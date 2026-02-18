@@ -49,14 +49,26 @@ def load_codex_credentials(path: Path) -> CodexCredentials | None:
     if not oauth or oauth.get("type") != "oauth":
         return None
 
+    access = oauth.get("access")
+    refresh = oauth.get("refresh")
+    expires = oauth.get("expires")
+
+    if not access or not refresh:
+        logger.warning("Codex auth.json missing access or refresh token")
+        return None
+
+    if not isinstance(expires, (int, float)):
+        logger.warning("Codex auth.json has invalid expires value: %r", expires)
+        return None
+
     auth_meta = data.get("https://api.openai.com/auth", {})
     account_id = auth_meta.get("chatgpt_account_id", "")
 
     return CodexCredentials(
-        access_token=oauth["access"],
-        refresh_token=oauth["refresh"],
+        access_token=access,
+        refresh_token=refresh,
         account_id=account_id,
-        expires=oauth["expires"] / 1000,  # ms → seconds
+        expires=expires / 1000,  # ms → seconds
     )
 
 

@@ -70,3 +70,37 @@ def test_missing_account_id_defaults_empty(auth_json):
     creds = load_codex_credentials(auth_json(data))
     assert creds is not None
     assert creds.account_id == ""
+
+
+def test_missing_access_token_returns_none(auth_json):
+    data = {
+        "openai-codex": {
+            "type": "oauth",
+            "refresh": "rt",
+            "expires": 1000000000000,
+        },
+    }
+    assert load_codex_credentials(auth_json(data)) is None
+
+
+def test_missing_refresh_token_returns_none(auth_json):
+    data = {
+        "openai-codex": {
+            "type": "oauth",
+            "access": "tok",
+            "expires": 1000000000000,
+        },
+    }
+    assert load_codex_credentials(auth_json(data)) is None
+
+
+def test_invalid_expires_returns_none(auth_json):
+    data = {
+        "openai-codex": {
+            "type": "oauth",
+            "access": "tok",
+            "refresh": "rt",
+            "expires": "not-a-number",
+        },
+    }
+    assert load_codex_credentials(auth_json(data)) is None
