@@ -74,7 +74,7 @@ def load_codex_credentials(path: Path) -> CodexCredentials | None:
 
 async def refresh_access_token(creds: CodexCredentials) -> CodexCredentials:
     """Refresh the access token using the refresh token."""
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=httpx.Timeout(30, connect=10)) as client:
         resp = await client.post(
             TOKEN_ENDPOINT,
             data={
