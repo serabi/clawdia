@@ -73,7 +73,11 @@ def load_codex_credentials(path: Path) -> CodexCredentials | None:
 
 
 async def refresh_access_token(creds: CodexCredentials) -> CodexCredentials:
-    """Refresh the access token using the refresh token."""
+    """Refresh the access token using the refresh token.
+
+    Returns a new CodexCredentials instance with the refreshed token.
+    Raises ValueError if the response is missing an access token.
+    """
     async with httpx.AsyncClient(timeout=httpx.Timeout(30, connect=10)) as client:
         resp = await client.post(
             TOKEN_ENDPOINT,
@@ -86,13 +90,17 @@ async def refresh_access_token(creds: CodexCredentials) -> CodexCredentials:
         resp.raise_for_status()
         data = resp.json()
 
-    creds.access_token = data["access_token"]
-    if "refresh_token" in data:
-        creds.refresh_token = data["refresh_token"]
-    # expires_in is in seconds
-    creds.expires = time.time() + data.get("expires_in", 3600)
+    access_token = data.get("access_token")
+    if not access_token:
+        raise ValueError("Token refresh response missing 'access_token'")
+
     logger.info("Refreshed ChatGPT access token")
-    return creds
+    return CodexCredentials(
+        access_token=access_token,
+        refresh_token=data.get("refresh_token", creds.refresh_token),
+        account_id=creds.account_id,
+        expires=time.time() + data.get("expires_in", 3600),
+    )
 
 
 async def ensure_valid_token(creds: CodexCredentials) -> CodexCredentials:

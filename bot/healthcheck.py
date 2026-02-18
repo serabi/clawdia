@@ -11,8 +11,9 @@ import sys
 
 def is_bot_running() -> bool:
     """Check if a process with 'clawdia' in its command line is running."""
+    own_pid = str(os.getpid())
     for pid in os.listdir("/proc"):
-        if not pid.isdigit():
+        if not pid.isdigit() or pid == own_pid:
             continue
         try:
             cmdline_path = f"/proc/{pid}/cmdline"
