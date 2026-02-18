@@ -10,7 +10,13 @@ class Settings(BaseSettings):
 
     telegram_bot_token: str
     telegram_user_id: int
-    openai_api_key: str
+
+    # Auth: Codex auth.json from ChatGPT plan (primary), or API key (fallback).
+    # Run `codex login` on a machine with a browser, then copy ~/.codex/auth.json
+    # into the codex-auth Docker volume.
+    codex_auth_path: Path = Path("/credentials/codex/auth.json")
+    openai_api_key: str | None = None
+
     openai_model: str = "gpt-5.2"
     reasoning_effort: str = "medium"
     max_tool_rounds: int = 5
