@@ -7,13 +7,9 @@ import pytest
 from clawdia.security import UserGateFilter
 
 
-AUTHORIZED_ID = 123456789
-UNAUTHORIZED_ID = 987654321
-
-
 @pytest.fixture
-def gate():
-    return UserGateFilter(AUTHORIZED_ID)
+def gate(authorized_user_id):
+    return UserGateFilter(authorized_user_id)
 
 
 @pytest.fixture
@@ -31,23 +27,23 @@ def make_update():
     return _make
 
 
-def test_authorized_user_passes(gate, make_update):
-    update = make_update(AUTHORIZED_ID)
+def test_authorized_user_passes(gate, make_update, authorized_user_id):
+    update = make_update(authorized_user_id)
     assert gate.filter(update) is True
 
 
-def test_unauthorized_user_rejected(gate, make_update):
-    update = make_update(UNAUTHORIZED_ID)
+def test_unauthorized_user_rejected(gate, make_update, unauthorized_user_id):
+    update = make_update(unauthorized_user_id)
     assert gate.filter(update) is False
 
 
-def test_group_chat_rejected(gate, make_update):
-    update = make_update(AUTHORIZED_ID, chat_type="group")
+def test_group_chat_rejected(gate, make_update, authorized_user_id):
+    update = make_update(authorized_user_id, chat_type="group")
     assert gate.filter(update) is False
 
 
-def test_supergroup_chat_rejected(gate, make_update):
-    update = make_update(AUTHORIZED_ID, chat_type="supergroup")
+def test_supergroup_chat_rejected(gate, make_update, authorized_user_id):
+    update = make_update(authorized_user_id, chat_type="supergroup")
     assert gate.filter(update) is False
 
 
@@ -56,4 +52,12 @@ def test_no_user_rejected(gate):
     update.effective_user = None
     update.effective_chat = MagicMock()
     update.effective_chat.type = "private"
+    assert gate.filter(update) is False
+
+
+def test_no_chat_rejected(gate):
+    update = MagicMock()
+    update.effective_chat = None
+    update.effective_user = MagicMock()
+    update.effective_user.id = 123456789
     assert gate.filter(update) is False

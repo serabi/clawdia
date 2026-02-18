@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     settings = Settings()
-    logger.info("Starting Clawdia bot (model=%s)", settings.openai_model)
+    logger.info("Starting Clawdia bot (model=%s, user_id=%s)", settings.openai_model, settings.telegram_user_id)
 
     gate = UserGateFilter(settings.telegram_user_id)
 

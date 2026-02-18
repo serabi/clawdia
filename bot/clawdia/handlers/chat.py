@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Echo the user's message back. Replaced with AI handler in Phase 2."""
-    text = update.message.text
-    if not text:
+    if not update.message or not update.message.text:
         return
-    await update.message.reply_text(text)
+    await update.message.reply_text(update.message.text)

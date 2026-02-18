@@ -5,7 +5,7 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 
 
-async def health(request):
+async def health(_request):
     return JSONResponse({"status": "ok"})
 
 

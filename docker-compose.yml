@@ -16,6 +16,11 @@ services:
     mem_limit: 512m
     cpus: 1.0
     security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "python -m clawdia"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     restart: unless-stopped
 
   mcp-calendar:

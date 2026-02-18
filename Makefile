@@ -1,4 +1,6 @@
-.PHONY: build up down logs restart test
+.PHONY: all build up down logs restart test clean
+
+all: build up
 
 build:
 	docker compose build
@@ -17,3 +19,6 @@ restart:
 
 test:
 	python -m pytest tests/ -v
+
+clean:
+	docker compose down --volumes --rmi local

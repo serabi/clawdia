@@ -16,12 +16,16 @@ class UserGateFilter(filters.UpdateFilter):
         self.authorized_user_id = authorized_user_id
 
     def filter(self, update: Update) -> bool:
-        # Reject non-private chats (groups, supergroups, channels)
-        if update.effective_chat and update.effective_chat.type != "private":
+        if not update.effective_chat:
+            return False
+
+        if update.effective_chat.type != "private":
+            logger.debug("Rejected non-private chat (type=%s)", update.effective_chat.type)
             return False
 
         user = update.effective_user
         if user is None or user.id != self.authorized_user_id:
+            logger.debug("Rejected unauthorized user (id=%s)", user.id if user else None)
             return False
 
         return True
