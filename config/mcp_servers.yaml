@@ -1,0 +1,7 @@
+servers:
+  weather:
+    url: http://mcp-weather:8002/mcp
+    description: "Weather forecasts via Open-Meteo"
+  calendar:
+    url: http://mcp-calendar:8001/mcp
+    description: "Google Calendar integration"
